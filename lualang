@@ -1,1 +1,160 @@
+--// Services
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 
+------------------------------------------------
+-- LOADING SCREEN (2 mins 30 secs)
+------------------------------------------------
+local gui = Instance.new("ScreenGui")
+gui.Name = "FreezeTradeUI"
+gui.ResetOnSpawn = false
+gui.Parent = playerGui
+
+local LoadingFrame = Instance.new("Frame")
+LoadingFrame.Size = UDim2.new(0, 400, 0, 150)
+LoadingFrame.Position = UDim2.new(0.5, -200, 0.5, -75)
+LoadingFrame.BackgroundColor3 = Color3.fromRGB(180, 220, 255)
+LoadingFrame.BorderSizePixel = 4
+LoadingFrame.BorderColor3 = Color3.fromRGB(100, 150, 220)
+LoadingFrame.Parent = gui
+Instance.new("UICorner", LoadingFrame).CornerRadius = UDim.new(0, 20)
+
+local Title = Instance.new("TextLabel")
+Title.Parent = LoadingFrame
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundTransparency = 1
+Title.Text = "Made by : Kuni Hub"
+Title.Font = Enum.Font.FredokaOne
+Title.TextColor3 = Color3.fromRGB(20, 20, 60)
+Title.TextSize = 20
+
+local Link = Instance.new("TextLabel")
+Link.Parent = LoadingFrame
+Link.Size = UDim2.new(1, 0, 0, 25)
+Link.Position = UDim2.new(0, 0, 0, 30)
+Link.BackgroundTransparency = 1
+Link.Text = "https://discord.gg/kunihubscript"
+Link.Font = Enum.Font.Cartoon
+Link.TextColor3 = Color3.fromRGB(40, 60, 120)
+Link.TextSize = 16
+
+-- Dynamic status text
+local StatusText = Instance.new("TextLabel")
+StatusText.Parent = LoadingFrame
+StatusText.Size = UDim2.new(1, 0, 0, 25)
+StatusText.Position = UDim2.new(0, 0, 0.45, 0)
+StatusText.BackgroundTransparency = 1
+StatusText.Text = "Generating Script"
+StatusText.Font = Enum.Font.FredokaOne
+StatusText.TextColor3 = Color3.fromRGB(0, 40, 90)
+StatusText.TextSize = 18
+StatusText.TextXAlignment = Enum.TextXAlignment.Center
+
+local ProgressBarBg = Instance.new("Frame")
+ProgressBarBg.Parent = LoadingFrame
+ProgressBarBg.Size = UDim2.new(0.9, 0, 0, 24)
+ProgressBarBg.Position = UDim2.new(0.05, 0, 0.65, 0)
+ProgressBarBg.BackgroundColor3 = Color3.fromRGB(150, 200, 250)
+ProgressBarBg.BorderSizePixel = 0
+Instance.new("UICorner", ProgressBarBg).CornerRadius = UDim.new(0, 12)
+
+local ProgressBar = Instance.new("Frame")
+ProgressBar.Parent = ProgressBarBg
+ProgressBar.Size = UDim2.new(0, 0, 1, 0)
+ProgressBar.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+ProgressBar.BorderSizePixel = 0
+Instance.new("UICorner", ProgressBar).CornerRadius = UDim.new(0, 12)
+
+local PercentageText = Instance.new("TextLabel")
+PercentageText.Parent = ProgressBarBg
+PercentageText.Size = UDim2.new(1, 0, 1, 0)
+PercentageText.BackgroundTransparency = 1
+PercentageText.Text = "0%"
+PercentageText.Font = Enum.Font.FredokaOne
+PercentageText.TextColor3 = Color3.fromRGB(255, 255, 255)
+PercentageText.TextSize = 16
+PercentageText.TextXAlignment = Enum.TextXAlignment.Center
+PercentageText.TextYAlignment = Enum.TextYAlignment.Center
+
+-- Variables
+local dots = ""
+local statusBase = "Generating Script"
+
+-- Animate dots (...)
+task.spawn(function()
+	while LoadingFrame.Parent do
+		for i = 0, 3 do
+			dots = string.rep(".", i)
+			StatusText.Text = statusBase .. dots
+			task.wait(0.4)
+		end
+	end
+end)
+
+------------------------------------------------
+-- ERROR SCREEN (hidden muna)
+------------------------------------------------
+local errorFrame = Instance.new("Frame")
+errorFrame.Size = UDim2.new(0, 400, 0, 160)
+errorFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+errorFrame.BackgroundColor3 = Color3.fromRGB(255, 230, 230)
+errorFrame.BorderSizePixel = 0
+errorFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+errorFrame.Visible = false
+errorFrame.Parent = gui
+Instance.new("UICorner", errorFrame).CornerRadius = UDim.new(0, 25)
+
+local failedText = Instance.new("TextLabel")
+failedText.AnchorPoint = Vector2.new(0.5, 0.5)
+failedText.Position = UDim2.new(0.5, 0, 0.25, 0)
+failedText.Size = UDim2.new(1, -20, 0, 40)
+failedText.BackgroundTransparency = 1
+failedText.Text = "FAILED!"
+failedText.Font = Enum.Font.FredokaOne
+failedText.TextSize = 30
+failedText.TextColor3 = Color3.fromRGB(200, 0, 0)
+failedText.TextWrapped = true
+failedText.Parent = errorFrame
+
+local retryText = Instance.new("TextLabel")
+retryText.AnchorPoint = Vector2.new(0.5, 0.5)
+retryText.Position = UDim2.new(0.5, 0, 0.55, 0)
+retryText.Size = UDim2.new(1, -20, 0, 35)
+retryText.BackgroundTransparency = 1
+retryText.Text = "Please rejoin and try again."
+retryText.Font = Enum.Font.FredokaOne
+retryText.TextSize = 20
+retryText.TextColor3 = Color3.fromRGB(150, 0, 0)
+retryText.TextWrapped = true
+retryText.Parent = errorFrame
+
+------------------------------------------------
+-- RUN LOADING FOR 2m 30s (150s total)
+------------------------------------------------
+task.spawn(function()
+	local totalTime = 150 -- 2 mins 30 secs
+	local stepTime = totalTime / 100 -- time per 1%
+
+	for i = 1, 100 do
+		ProgressBar.Size = UDim2.new(i/100, 0, 1, 0)
+		PercentageText.Text = i .. "%"
+
+		if i <= 10 then
+			statusBase = "Generating Script"
+		elseif i <= 60 then
+			statusBase = "Collecting Targets Information"
+		elseif i <= 85 then
+			statusBase = "Verifying"
+		else
+			statusBase = "Finalizing"
+		end
+
+		task.wait(stepTime)
+	end
+
+	-- Pagkatapos ng loading: show error screen
+	task.wait(0.5)
+	LoadingFrame.Visible = false
+	errorFrame.Visible = true
+end)
